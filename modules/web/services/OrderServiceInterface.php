@@ -9,7 +9,7 @@ interface OrderServiceInterface
     /**
      * @param $orderId
      * @param $trackingCode
-     * @param $statusCode
+     * @param $status
      * @throws DomainRecordNotFoundException
      * @throws OrderStatusAlreadySetException
      */
