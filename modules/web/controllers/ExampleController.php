@@ -6,7 +6,10 @@ namespace app\controllers;
 
 use app\models\Country;
 use app\models\Order;
+use yii\base\InvalidArgumentException;
+use yii\helpers\BaseJson;
 use yii\web\Controller;
+use Yii;
 
 /**
  * Class ExampleController
@@ -16,11 +19,13 @@ class ExampleController extends Controller
 {
     public function actionIndex($countryChar = 'ID')
     {
-        $resultApiJson = file_get_contents('php://input');
+        $resultApiJson = Yii::$app->request->getRawBody();
 
-        if ($result = json_decode($resultApiJson, true)) {
+        try {
+            $result = BaseJson::decode($resultApiJson, true);
             $orderId = (int)$result->OrderCode;
             $trackingCode = (string)$result->TrackingCode;
+
             $order = Order::find()->where(['id' => $orderId, 'tracking' => $trackingCode])->one();
 
             switch ($result->StatusCode) {
@@ -43,6 +48,9 @@ class ExampleController extends Controller
                 $msg = "Status of order #{$orderId} already set to \"{$status}\".";
                 return $this->fail($msg);
             }
+
+        } catch (InvalidArgumentException $e) {
+            return $this->fail($e->getMessage());
         }
     }
 }
