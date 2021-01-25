@@ -14,13 +14,9 @@ use yii\web\Controller;
  */
 class ExampleController extends Controller
 {
-    protected $countryChar;
-
     public function actionIndex($countryChar = 'ID')
     {
-        $this->countryChar = $countryChar;
         $resultApiJson = file_get_contents('php://input');
-        $country = Country::find()->byCharCode($countryChar)->one();
 
         if ($result = json_decode($resultApiJson, true)) {
             $orderId = (int)$result->OrderCode;
